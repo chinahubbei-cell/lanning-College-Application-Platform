@@ -23,6 +23,7 @@ export default function PlanList() {
         year: 2025,
     });
     const [creating, setCreating] = useState(false);
+    const [deletingPlanId, setDeletingPlanId] = useState(null);
 
     useEffect(() => {
         if (user) fetchPlans();
@@ -62,13 +63,23 @@ export default function PlanList() {
         }
     };
 
-    const handleDelete = async (planId) => {
-        if (!confirm('确定要删除该方案吗？')) return;
+    const openDeleteConfirm = (planId) => {
+        setDeletingPlanId(planId);
+    };
+
+    const closeDeleteConfirm = () => {
+        setDeletingPlanId(null);
+    };
+
+    const handleDelete = async () => {
+        if (!deletingPlanId) return;
         try {
-            await deletePlan(planId);
-            setPlans(plans.filter((p) => p.id !== planId));
+            await deletePlan(deletingPlanId);
+            setPlans((prev) => prev.filter((p) => p.id !== deletingPlanId));
         } catch (err) {
             console.error('Failed to delete plan:', err);
+        } finally {
+            closeDeleteConfirm();
         }
     };
 
@@ -203,7 +214,7 @@ export default function PlanList() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => handleDelete(plan.id)}
+                                            onClick={() => openDeleteConfirm(plan.id)}
                                         >
                                             🗑️ 删除
                                         </Button>
@@ -212,6 +223,22 @@ export default function PlanList() {
                             </CardBody>
                         </Card>
                     ))}
+                </div>
+            )}
+
+            {deletingPlanId && (
+                <div className="plan-delete-modal" role="dialog" aria-modal="true" aria-labelledby="plan-delete-title">
+                    <div className="plan-delete-modal__backdrop" onClick={closeDeleteConfirm} />
+                    <Card variant="glass" className="plan-delete-modal__card">
+                        <CardBody>
+                            <h3 id="plan-delete-title" className="plan-delete-modal__title">确认删除该方案？</h3>
+                            <p className="plan-delete-modal__desc">删除后无法恢复，且方案内志愿条目也会一并移除。</p>
+                            <div className="plan-delete-modal__actions">
+                                <Button variant="ghost" onClick={closeDeleteConfirm}>取消</Button>
+                                <Button variant="danger" onClick={handleDelete}>确认删除</Button>
+                            </div>
+                        </CardBody>
+                    </Card>
                 </div>
             )}
         </div>
