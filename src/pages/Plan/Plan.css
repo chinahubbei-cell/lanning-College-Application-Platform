@@ -1,0 +1,295 @@
+/* ============================================================
+   Plan Pages — List & Detail
+   ============================================================ */
+
+.plan-page {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-12);
+}
+
+.plan-page__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+}
+
+.plan-page__title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--space-2);
+}
+
+.plan-page__subtitle {
+    color: var(--color-text-secondary);
+}
+
+/* Create Card */
+.plan-create-card {
+    margin-bottom: var(--space-6);
+}
+
+.plan-create-card__title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+}
+
+.plan-create-form__row {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.plan-create-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex: 1;
+    min-width: 160px;
+}
+
+.plan-create-form__field label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-secondary);
+}
+
+.plan-create-form__actions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+/* Plan Grid */
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-5);
+}
+
+.plan-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.plan-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.plan-card__name {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+}
+
+.plan-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.plan-card__meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.plan-card__time {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.plan-card__actions {
+    display: flex;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border-light);
+}
+
+/* Empty */
+.plan-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-16) 0;
+    gap: var(--space-4);
+    color: var(--color-text-secondary);
+}
+
+.plan-empty__visual {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: var(--gradient-card);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    margin-bottom: var(--space-2);
+}
+
+/* ============================================================
+   Plan Detail
+   ============================================================ */
+.plan-detail {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-12);
+}
+
+.plan-detail__hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-6) var(--space-8);
+    background: var(--gradient-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    margin-bottom: var(--space-6);
+}
+
+.plan-detail__name {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--space-3);
+}
+
+.plan-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.plan-detail__hero-right {
+    display: flex;
+    gap: var(--space-6);
+}
+
+.plan-detail__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.plan-detail__stat-num {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-extrabold);
+    font-family: var(--font-mono);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.plan-detail__stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+}
+
+.plan-detail__tip {
+    margin-bottom: var(--space-6);
+}
+
+.plan-detail__tip p {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Risk Section */
+.plan-risk-section {
+    margin-bottom: var(--space-6);
+}
+
+.plan-risk-section__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-3);
+}
+
+.plan-items-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.plan-item-card__content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.plan-item-card__order {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-tertiary);
+    border-radius: 50%;
+    font-weight: var(--font-bold);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+}
+
+.plan-item-card__main {
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+}
+
+.plan-item-card__main h4 {
+    font-weight: var(--font-bold);
+    margin-bottom: 2px;
+}
+
+.plan-item-card__remove {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.plan-item-card__remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .plan-page__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .plan-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .plan-detail__hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+
+    .plan-create-form__row {
+        flex-direction: column;
+    }
+}
