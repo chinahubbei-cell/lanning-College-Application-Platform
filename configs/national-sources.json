@@ -1,0 +1,39 @@
+{
+  "version": "v1",
+  "updatedAt": "2026-03-02",
+  "sources": [
+    {
+      "id": "minedu_list",
+      "name": "教育部高校名单",
+      "type": "ministry",
+      "priority": 1,
+      "frequency": "weekly"
+    },
+    {
+      "id": "provincial_exam",
+      "name": "各省教育考试院",
+      "type": "provincial",
+      "priority": 1,
+      "frequency": "daily"
+    },
+    {
+      "id": "sunshine_gaokao",
+      "name": "阳光高考",
+      "type": "public",
+      "priority": 2,
+      "frequency": "daily"
+    },
+    {
+      "id": "school_admission_site",
+      "name": "高校本科招生网",
+      "type": "school",
+      "priority": 2,
+      "frequency": "daily"
+    }
+  ],
+  "provinces": [
+    "北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川", "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆"
+  ],
+  "years": [2021, 2022, 2023, 2024, 2025],
+  "subjectTracks": ["物理类", "历史类", "理科", "文科", "综合"]
+}
