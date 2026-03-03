@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 const useUIStore = create((set) => ({
     // Theme
-    theme: 'dark',
+    theme: 'light',
     toggleTheme: () => set((state) => ({
         theme: state.theme === 'dark' ? 'light' : 'dark',
     })),

@@ -11,11 +11,15 @@ import {
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { getUniversityById, getMajorsByUniversity, getAdmissionScores } from '../../services/universityService';
+import { getPlans, addPlanItem } from '../../services/planService';
+import useAuthStore from '../../stores/useAuthStore';
+import useUIStore from '../../stores/useUIStore';
 import Card, { CardBody, CardHeader } from '../../components/common/Card';
 import Tag from '../../components/common/Tag';
 import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import './University.css';
+import '../Recommend/Recommend.css'; // Reuse modal styles
 
 // Register echarts modules
 echarts.use([LineChart, BarChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent, CanvasRenderer]);
@@ -27,6 +31,50 @@ export default function UniversityDetail() {
     const [scores, setScores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('info');
+
+    // Plan modal states
+    const { user } = useAuthStore();
+    const { addToast } = useUIStore();
+    const [showPlanModal, setShowPlanModal] = useState(false);
+    const [plans, setPlans] = useState([]);
+    const [loadingPlans, setLoadingPlans] = useState(false);
+    const [addingToPlan, setAddingToPlan] = useState(false);
+
+    const handleOpenPlanModal = async () => {
+        if (!user) {
+            addToast({ type: 'warning', message: '请先登录后再添加到方案' });
+            return;
+        }
+        setShowPlanModal(true);
+        if (plans.length === 0) {
+            setLoadingPlans(true);
+            try {
+                const data = await getPlans();
+                setPlans(data || []);
+            } catch (err) {
+                console.error('Failed to fetch plans', err);
+            } finally {
+                setLoadingPlans(false);
+            }
+        }
+    };
+
+    const handleAddToPlan = async (planId) => {
+        if (!university) return;
+        setAddingToPlan(true);
+        try {
+            await addPlanItem(planId, {
+                universityId: university.id,
+                riskLevel: 'unknown'
+            });
+            addToast({ type: 'success', message: '已成功添加到方案' });
+            setShowPlanModal(false);
+        } catch (err) {
+            addToast({ type: 'error', message: err.message || '添加到方案失败' });
+        } finally {
+            setAddingToPlan(false);
+        }
+    };
 
     useEffect(() => {
         async function fetchData() {
@@ -226,6 +274,15 @@ export default function UniversityDetail() {
                             {getLevelTag()}
                             <Tag variant="default" size="md">{university.type}</Tag>
                             <Tag variant="default" size="md">代码: {university.code}</Tag>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="uni-detail__add-plan-btn"
+                                onClick={handleOpenPlanModal}
+                                style={{ marginLeft: 'var(--space-2)' }}
+                            >
+                                ➕ 加入方案
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -408,6 +465,45 @@ export default function UniversityDetail() {
                     </div>
                 )}
             </div>
+
+            {/* Plan Modal */}
+            {showPlanModal && (
+                <div className="recommend-plan-modal" role="dialog" aria-modal="true">
+                    <div className="recommend-plan-modal__backdrop" onClick={() => setShowPlanModal(false)} />
+                    <Card variant="glass" className="recommend-plan-modal__card animate-fade-in-up">
+                        <CardHeader>
+                            <div className="recommend-plan-modal__header-inner">
+                                <h3>添加到志愿方案</h3>
+                                <button className="recommend-plan-modal__close" onClick={() => setShowPlanModal(false)}>✕</button>
+                            </div>
+                        </CardHeader>
+                        <CardBody>
+                            {loadingPlans ? (
+                                <Loading text="加载方案列表中..." />
+                            ) : plans.length === 0 ? (
+                                <div className="recommend-plan-empty">
+                                    <p>您还没有创建任何方案。</p>
+                                    <Link to="/plans" className="recommend-plan-modal__link">
+                                        <Button size="sm">去创建方案</Button>
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="recommend-plan-list">
+                                    {plans.map(plan => (
+                                        <div key={plan.id} className="recommend-plan-item" onClick={() => handleAddToPlan(plan.id)}>
+                                            <div className="recommend-plan-item__info">
+                                                <h4>{plan.name}</h4>
+                                                <p className="recommend-plan-item__meta">{plan.plan_items?.[0]?.count || 0} 个志愿</p>
+                                            </div>
+                                            <Button size="sm" variant="outline" loading={addingToPlan}>选择</Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </CardBody>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

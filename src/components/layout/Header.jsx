@@ -14,11 +14,20 @@ const NAV_ITEMS = [
     { path: '/assistant', label: 'AI 助手', icon: '🤖' },
 ];
 
+const ADMIN_NAV_ITEMS = [
+    { path: '/admin/data', label: '数据管理', icon: '⚙️' },
+];
+
 export default function Header() {
     const location = useLocation();
     const navigate = useNavigate();
     const { theme, toggleTheme, mobileMenuOpen, setMobileMenuOpen } = useUIStore();
     const { user } = useAuthStore();
+
+    const isAdmin = user?.profile?.role === 'admin';
+
+    // Combine nav items: show admin items only to admins
+    const visibleNavItems = isAdmin ? [...NAV_ITEMS, ...ADMIN_NAV_ITEMS] : NAV_ITEMS;
 
     const handleSignOut = async () => {
         try {
@@ -40,7 +49,7 @@ export default function Header() {
 
                 {/* Desktop Nav */}
                 <nav className="header__nav">
-                    {NAV_ITEMS.map((item) => (
+                    {visibleNavItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
@@ -91,7 +100,7 @@ export default function Header() {
             {/* Mobile Nav */}
             {mobileMenuOpen && (
                 <nav className="header__mobile-nav animate-fade-in-down">
-                    {NAV_ITEMS.map((item) => (
+                    {visibleNavItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}

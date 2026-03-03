@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import useUIStore from './stores/useUIStore';
 import useAuth from './hooks/useAuth';
+import useAuthStore from './stores/useAuthStore';
 import MainLayout from './components/layout/MainLayout';
 import Landing from './pages/Landing/Landing';
 import Login from './pages/Auth/Login';
@@ -16,7 +17,20 @@ import PlanDetail from './pages/Plan/PlanDetail';
 import Analytics from './pages/Analytics/Analytics';
 import Assistant from './pages/Assistant/Assistant';
 import Profile from './pages/Profile/Profile';
+import DataSyncAdmin from './pages/Admin/DataSync';
 import { NotFound } from './pages/Placeholder/Placeholder';
+
+/**
+ * Admin route guard — redirects non-admin users to homepage
+ */
+function AdminRoute({ children }) {
+  const { user, loading } = useAuthStore();
+  const isAdmin = user?.profile?.role === 'admin';
+
+  if (loading) return null; // Still loading auth state
+  if (!isAdmin) return <Navigate to="/" replace />;
+  return children;
+}
 
 function AppContent() {
   const { theme } = useUIStore();
@@ -58,6 +72,13 @@ function AppContent() {
 
         {/* Profile */}
         <Route path="/profile" element={<Profile />} />
+
+        {/* Admin Data Sync — admin only */}
+        <Route path="/admin/data" element={
+          <AdminRoute>
+            <DataSyncAdmin />
+          </AdminRoute>
+        } />
 
         <Route path="*" element={<NotFound />} />
       </Route>

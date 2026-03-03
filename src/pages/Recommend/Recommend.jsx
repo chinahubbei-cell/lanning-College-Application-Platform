@@ -6,6 +6,9 @@ import Tag from '../../components/common/Tag';
 import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import { PROVINCES, SUBJECT_TYPES } from '../../utils/constants';
+import useAuthStore from '../../stores/useAuthStore';
+import useUIStore from '../../stores/useUIStore';
+import { getPlans, addPlanItem } from '../../services/planService';
 import './Recommend.css';
 
 const RISK_CONFIG = {
@@ -25,6 +28,55 @@ export default function Recommend() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [hasSearched, setHasSearched] = useState(false);
+
+    // Plan modal states
+    const { user } = useAuthStore();
+    const { addToast } = useUIStore();
+    const [showPlanModal, setShowPlanModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [plans, setPlans] = useState([]);
+    const [loadingPlans, setLoadingPlans] = useState(false);
+    const [addingToPlan, setAddingToPlan] = useState(false);
+
+    const handleOpenPlanModal = async (e, item, riskKey) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+            addToast({ type: 'warning', message: '请先登录后再添加到方案' });
+            return;
+        }
+        setSelectedItem({ universityId: item.university.id, riskLevel: riskKey });
+        setShowPlanModal(true);
+        if (plans.length === 0) {
+            setLoadingPlans(true);
+            try {
+                const data = await getPlans();
+                setPlans(data || []);
+            } catch (err) {
+                console.error('Failed to fetch plans', err);
+            } finally {
+                setLoadingPlans(false);
+            }
+        }
+    };
+
+    const handleAddToPlan = async (planId) => {
+        if (!selectedItem) return;
+        setAddingToPlan(true);
+        try {
+            await addPlanItem(planId, {
+                universityId: selectedItem.universityId,
+                riskLevel: selectedItem.riskLevel
+            });
+            addToast({ type: 'success', message: '已成功添加到方案' });
+            setShowPlanModal(false);
+            setSelectedItem(null);
+        } catch (err) {
+            addToast({ type: 'error', message: err.message || '添加到方案失败' });
+        } finally {
+            setAddingToPlan(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -258,6 +310,16 @@ export default function Recommend() {
                                                                     </div>
                                                                 )}
                                                             </div>
+                                                            <div className="recommend-card__actions">
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="recommend-card__add-btn"
+                                                                    onClick={(e) => handleOpenPlanModal(e, item, riskKey)}
+                                                                >
+                                                                    ➕ 加入方案
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </CardBody>
                                                 </Card>
@@ -293,6 +355,45 @@ export default function Recommend() {
                             <span>获取冲/稳/保推荐</span>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Plan Modal */}
+            {showPlanModal && (
+                <div className="recommend-plan-modal" role="dialog" aria-modal="true">
+                    <div className="recommend-plan-modal__backdrop" onClick={() => setShowPlanModal(false)} />
+                    <Card variant="glass" className="recommend-plan-modal__card animate-fade-in-up">
+                        <CardHeader>
+                            <div className="recommend-plan-modal__header-inner">
+                                <h3>添加到志愿方案</h3>
+                                <button className="recommend-plan-modal__close" onClick={() => setShowPlanModal(false)}>✕</button>
+                            </div>
+                        </CardHeader>
+                        <CardBody>
+                            {loadingPlans ? (
+                                <Loading text="加载方案列表中..." />
+                            ) : plans.length === 0 ? (
+                                <div className="recommend-plan-empty">
+                                    <p>您还没有创建任何方案。</p>
+                                    <Link to="/plans" className="recommend-plan-modal__link">
+                                        <Button size="sm">去创建方案</Button>
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="recommend-plan-list">
+                                    {plans.map(plan => (
+                                        <div key={plan.id} className="recommend-plan-item" onClick={() => handleAddToPlan(plan.id)}>
+                                            <div className="recommend-plan-item__info">
+                                                <h4>{plan.name}</h4>
+                                                <p className="recommend-plan-item__meta">{plan.plan_items?.[0]?.count || 0} 个志愿</p>
+                                            </div>
+                                            <Button size="sm" variant="outline" loading={addingToPlan}>选择</Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </CardBody>
+                    </Card>
                 </div>
             )}
         </div>
