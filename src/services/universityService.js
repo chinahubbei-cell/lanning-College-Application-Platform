@@ -2,6 +2,7 @@ import supabase from './supabase';
 
 /**
  * 获取院校列表（支持搜索、筛选、分页）
+ * 优化: 仅选取列表页需要的字段，不拉取 description 等大文本
  */
 export async function getUniversities({
     search = '',
@@ -13,7 +14,7 @@ export async function getUniversities({
 } = {}) {
     let query = supabase
         .from('universities')
-        .select('*', { count: 'exact' });
+        .select('id, name, code, province, city, level, type, is_985, is_211, is_double_first_class, logo_url, founding_year', { count: 'exact' });
 
     if (search) {
         query = query.ilike('name', `%${search}%`);
@@ -40,12 +41,12 @@ export async function getUniversities({
 }
 
 /**
- * 获取院校详情
+ * 获取院校详情 — 明确指定所有需要的字段，避免 select('*') 带来的 Schema 缓存问题
  */
 export async function getUniversityById(id) {
     const { data, error } = await supabase
         .from('universities')
-        .select('*')
+        .select('id, name, code, province, city, level, type, is_985, is_211, is_double_first_class, description, website, logo_url, tags, master_dept, founding_year, campus_area, student_count, is_private')
         .eq('id', id)
         .single();
     if (error) throw error;
@@ -54,11 +55,12 @@ export async function getUniversityById(id) {
 
 /**
  * 获取院校的专业列表
+ * 优化: 仅选取列表展示需要的字段
  */
 export async function getMajorsByUniversity(universityId) {
     const { data, error } = await supabase
         .from('majors')
-        .select('*')
+        .select('id, name, category, degree, duration, description')
         .eq('university_id', universityId)
         .order('category');
     if (error) throw error;
@@ -67,11 +69,12 @@ export async function getMajorsByUniversity(universityId) {
 
 /**
  * 获取院校的录取分数线
+ * 优化: 仅选取图表和表格展示需要的字段
  */
 export async function getAdmissionScores(universityId, { province, subjectType } = {}) {
     let query = supabase
         .from('admission_scores')
-        .select('*')
+        .select('id, year, province, subject_type, batch, min_score, avg_score, min_rank')
         .eq('university_id', universityId);
 
     if (province) query = query.eq('province', province);

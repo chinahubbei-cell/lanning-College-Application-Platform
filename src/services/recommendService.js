@@ -3,6 +3,7 @@ import supabase from './supabase';
 /**
  * 智能推荐算法
  * 基于分数/位次匹配，按风险等级（冲/稳/保）分组
+ * 优化: 仅选取推荐卡片展示需要的字段，使用 score range 减少传输量
  */
 export async function getRecommendations({
     score,
@@ -12,16 +13,21 @@ export async function getRecommendations({
 }) {
     if (!score || !province) throw new Error('分数和省份为必填项');
 
-    // 获取该省份最近年份的录取分数线
+    // 优化: 使用分数范围过滤 (score - 30) ~ (score + 50)，减少数据传输
+    const minScore = score - 30;
+    const maxScore = score + 50;
+
     const { data: allScores, error } = await supabase
         .from('admission_scores')
         .select(`
-      *,
-      universities (id, name, code, province, city, level, type, is_985, is_211, is_double_first_class, description)
-    `)
+            id, year, min_score, min_rank,
+            universities (id, name, code, province, city, level, type, is_985, is_211, is_double_first_class)
+        `)
         .eq('province', province)
         .eq('subject_type', subjectType)
         .eq('year', year)
+        .gte('min_score', minScore)
+        .lte('min_score', maxScore)
         .order('min_score', { ascending: false });
 
     if (error) throw error;

@@ -207,7 +207,11 @@ export default function UniversityList() {
                                                 <div className="uni-card__content">
                                                     <div className="uni-card__header">
                                                         <div className="uni-card__avatar">
-                                                            {uni.name[0]}
+                                                            {uni.logo_url ? (
+                                                                <img src={uni.logo_url} alt={uni.name} className="uni-card__logo-img" />
+                                                            ) : (
+                                                                uni.name[0]
+                                                            )}
                                                         </div>
                                                         <div className="uni-card__info">
                                                             <h3 className="uni-card__name">{uni.name}</h3>

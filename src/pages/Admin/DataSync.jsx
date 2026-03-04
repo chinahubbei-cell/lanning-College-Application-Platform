@@ -8,6 +8,7 @@ const SYNC_TIMEOUT = 120000; // 2 minutes
 
 const TASK_TYPE_LABELS = {
     UNIVERSITIES: '高校名录',
+    UNIVERSITY_DETAILS: '院校详情',
     MAJORS: '专业目录',
     SCORES: '分数线',
 };
@@ -127,6 +128,7 @@ export default function DataSyncAdmin() {
 
     const syncItems = [
         { type: 'UNIVERSITIES', title: '同步高校名录', desc: '从教育部名录增量更新，每年6月更新', icon: Server },
+        { type: 'UNIVERSITY_DETAILS', title: '补全院校详情', desc: '从掌上高考补全简介/官网/校徽/建校年份等', icon: Info },
         { type: 'MAJORS', title: '更新专业目录', desc: '覆盖全部高校最新开设专业信息', icon: Database },
         { type: 'SCORES', title: '拉取最新分数线', desc: '从掌上高考全量增量拉取分省分数线', icon: RefreshCw },
     ];

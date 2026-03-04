@@ -260,7 +260,11 @@ export default function UniversityDetail() {
             <div className="uni-detail__hero">
                 <div className="uni-detail__hero-left">
                     <div className="uni-detail__avatar">
-                        {university.name[0]}
+                        {university.logo_url ? (
+                            <img src={university.logo_url} alt={university.name} className="uni-detail__logo-img" />
+                        ) : (
+                            university.name[0]
+                        )}
                     </div>
                     <div className="uni-detail__hero-info">
                         <h1 className="uni-detail__name">{university.name}</h1>
@@ -357,6 +361,49 @@ export default function UniversityDetail() {
                                     </div>
                                 </CardBody>
                             </Card>
+                            {university.founding_year && (
+                                <Card variant="glass">
+                                    <CardBody>
+                                        <div className="uni-info-item">
+                                            <span className="uni-info-item__icon">📅</span>
+                                            <div><span className="uni-info-item__label">创办时间</span><span>{university.founding_year} 年</span></div>
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            )}
+                            {university.campus_area && (
+                                <Card variant="glass">
+                                    <CardBody>
+                                        <div className="uni-info-item">
+                                            <span className="uni-info-item__icon">🏟️</span>
+                                            <div><span className="uni-info-item__label">校园面积</span><span>{university.campus_area.toLocaleString()} 亩</span></div>
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            )}
+                            {university.master_dept && (
+                                <Card variant="glass">
+                                    <CardBody>
+                                        <div className="uni-info-item">
+                                            <span className="uni-info-item__icon">🏛️</span>
+                                            <div><span className="uni-info-item__label">主管部门</span><span>{university.master_dept}</span></div>
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            )}
+                            {university.website && (
+                                <Card variant="glass">
+                                    <CardBody>
+                                        <div className="uni-info-item">
+                                            <span className="uni-info-item__icon">🌐</span>
+                                            <div>
+                                                <span className="uni-info-item__label">官方网站</span>
+                                                <a href={university.website} target="_blank" rel="noreferrer" className="uni-info-item__link">{university.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
+                                            </div>
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            )}
                         </div>
                     </div>
                 )}
